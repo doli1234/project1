@@ -1,12 +1,19 @@
+from ast import Delete
+from dataclasses import fields
 import email
 from email.mime import image
+from itertools import product
+from msilib import Table
+from msilib.schema import tables
 from re import S
-from select import select
-from tokenize import Name
+from tarfile import RECORDSIZE
+
+
 from unicodedata import name
 from uuid import RFC_4122
 
 from db import cursor,conn
+from function import delete, excution_query, insert,select, update
 
 
 #               varibles wich paas when function call       
@@ -52,48 +59,78 @@ def login_data(email,passowrd):
 # for product
 
 def product_insert(name,image,price,desc,size):
-    sql="insert into product (pro_name ,pro_image ,pro_price ,pro_desc ,pro_size) values ('%s' ,'%s' ,'%s','%s','%s')"
-    cursor.execute(sql%(name,image,price,desc,size))
-    conn.commit()
-    print("data insert")
+    
+    #sql="insert into product (pro_name ,pro_image ,pro_price ,pro_desc ,pro_size) values ('%s' ,'%s' ,'%s','%s','%s')"
+    #cursor.execute(sql%(name,image,price,desc,size))
+    #conn.commit()
+    
+    fields = """ "pro_name","pro_image","pro_price","pro_desc","pro_size" """
+    data = [name,image,price,desc,size]
+    record = insert('product',fields,data)
+    return record
+
+# excution_query("sql",)
+# print("data insert")
 
 #fetch one product
 def fetch_product(id):
-    sql="select * from product where pro_id = %s"
-    cursor.execute(sql%id)
-    data = cursor.fetchone()
-    return dict(data)
+    #sql="select * from product where pro_id = %s"
+    #cursor.execute(sql%id)
+    #data = cursor.fetchone()
+    # #return dict(data)
+    fields = "*"
+    where = "where pro_id = %s"%id
+    record = select('product',fields,where)
+    return record
 
 #fetch all product
 def fetch_all():
-    sql="select * from product "
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    l1 = []
+    #sql="select * from product "
+    #cursor.execute(sql)
+   # data = cursor.fetchall()
+    fields =  " * "
+    where = " "  
+    record= select('product',fields,where,many=True)
+    print(record)
+    return record
+    '''l1 = []
     for i in data:
         r1 = dict(i)
         l1.append(r1)
-
-        
-
-    return l1
-
+    return l1'''
+    
 #delete product
 def del_pro(id):
-    sql= "delete from product where pro_id = %s"
-    cursor.execute(sql%id)
-    conn.commit()
-    print("data deleted")
+    #sql= "delete from product where pro_id = %s"
+    #cursor.execute(sql%id)
+    #conn.commit()
+    #excution_query(sql%id)
+    #print("data deleted")
+    fields = "*"
+    where = "where = %s"%id
+    record = delete('product',fields,where)
+    return record
 
 #update product
 def update_pro(name,image,price,desc,size,id):
-    sql="update product set pro_name= '%s' ,pro_image='%s' ,pro_price='%s', pro_desc= '%s',pro_size='%s' where pro_id = %s"
-    cursor.execute(sql%(name,image,price,desc,size,id))
-    conn.commit()
-    print("data updated")
+    #sql="update product set pro_name= '%s' ,pro_image='%s' ,pro_price='%s', pro_desc= '%s',pro_size='%s' where pro_id = %s"
+    #cursor.execute(sql%(name,image,price,desc,size,id))
+    #conn.commit()
+    #print("data updated")
+    fields = """ pro_name = %s,pro_image = %s,pro_price = %s,pro_desc = %s,pro_size = %s """
+    where = "where pro_id = %s"%id
+    data = [name,image,price,desc,size]
+    record = update('product',fields,data,where)
+    return record
 
 def company_data(comp_name):
-    sql="INSERT INTO company(comp_name)VALUES('%s')"
-    cursor.execute(sql%(comp_name))
-    conn.commit()
-    print("company data add")
+    #sql="INSERT INTO company(comp_name)VALUES('%s')"
+    #cursor.execute(sql%(comp_name))
+    #conn.commit()
+    #print("company data add")
+    fields = """ "comp_name" """
+    data = [comp_name]
+    record =insert('company',fields,data)
+    return record
+
+

@@ -2,12 +2,14 @@
 import email
 from email.mime import image
 import json
+from math import perm
 import os
 from tkinter import image_names
 from unicodedata import name
 from xml.dom.minidom import Identified
 from crud import *
 from psycopg2 import*
+
 
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
@@ -73,7 +75,7 @@ def product_add():
     desc= str(request.form['desc'])
     size= str(request.form['size'])
     image=secure_filename(request.files['img'].filename)
-
+    #peram = name,image,price,desc,size
     product_insert(name,image,price,desc,size)
     return jsonify("data inserted succesfully")
 
@@ -87,7 +89,7 @@ def product_fetch(id):
     str_image=os.path.join(os.path.abspath(os.path.dirname(__file__)),user_image_path,image_names)
     data['pro_image'] = str_image
 
-    return jsonify(data)
+    return jsonify(dict(data))
    
 
 #fetch all product
@@ -121,7 +123,7 @@ def product_update(id):
 
 @app.route("/company",methods=['POST'])
 def company():
-    name = request.json['name']
+    name = request.json['company']
     company_data(name)
     return jsonify ("your record sucessfully inserted")
 
