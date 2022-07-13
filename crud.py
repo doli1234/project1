@@ -6,7 +6,7 @@ from itertools import product
 from msilib import Table
 from msilib.schema import tables
 from re import S
-from tarfile import RECORDSIZE
+
 
 
 from unicodedata import name
@@ -19,36 +19,59 @@ from function import delete, excution_query, insert,select, update
 #               varibles wich paas when function call       
 def user_insert(name,password,email):
 #                            column name in databse
-    sql="INSERT INTO users (user_name,user_email,user_pass) VALUES ('%s', '%s', '%s')"
+    #sql="INSERT INTO users (user_name,user_email,user_pass) VALUES ('%s', '%s', '%s')"
 #                       varible wich get from calling funtion and passing for place of %s
-    cursor.execute(sql%(name,password,email))
-    conn.commit()
-    print("data insert")
+    #cursor.execute(sql%(name,password,email))
+    #conn.commit()
+    #print("data insert")
+    fields = """ "user_name","user_email","user_pass" """
+    data = [name,password,email]
+    record = insert('users',fields,data)
+    return record
+
 
 def user_fetchdata(id): 
     #sql="select * from users where user_id = %s" 
-    sql="select p.*,c.comp_name from product p left join company c on p.company_id = c.id where pro_id = %s"
-    cursor.execute(sql%(id))
-    data = cursor.fetchone()
-    return data
+    #sql="select p.*,c.comp_name from product p left join company c on p.company_id = c.id where pro_id = %s"
+    #cursor.execute(sql%(id))
+    #data = cursor.fetchone()
+    #return data
+    fields = "*"
+    where = "where user_id = %s"%id
+    record = select('users',fields,where)
+    return record
 
 def user_fetchall(): 
-    sql="select * from users" 
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    return data
+    #sql="select * from users" 
+    #cursor.execute(sql)
+    #data = cursor.fetchall()
+    #return data
+    fields =  " * "
+    where = " "  
+    record= select('users',fields,where,many=True)
+    return record
 
 def user_del(id):
-    sql="delete from users where user_id = %s"
-    cursor.execute(sql%id)
-    conn.commit()
-    print("data delete")
+    #sql="delete from users where user_id = %s"
+    #cursor.execute(sql%id)
+    #conn.commit()
+    #print("data delete)
+    where = "where user_id = %s"%id
+    delete('users',where)
+    
+    
 
 def user_update(name,email,password,id):
-    sql="update users set user_name= '%s' , user_email= '%s' , user_pass= '%s' where user_id= %s"
-    cursor.execute(sql%(name,email,password,id))
-    conn.commit()
-    print("updated")
+    #sql="update users set c where user_id= %s"
+    #cursor.execute(sql%(name,email,password,id))
+    #conn.commit()
+    #print("updated")
+    fields = """ user_name= %s , user_email= %s , user_pass= %s """
+    where = "where user_id = %s"%id
+    data = [name,email,password]
+    record = update('users',fields,data,where)
+    return record
+
 
 def login_data(email,passowrd):
     sql="select * from users where user_email= '%s' AND user_pass= '%s'"
@@ -77,7 +100,7 @@ def fetch_product(id):
     #sql="select * from product where pro_id = %s"
     #cursor.execute(sql%id)
     #data = cursor.fetchone()
-    # #return dict(data)
+    #return dict(data)
     fields = "*"
     where = "where pro_id = %s"%id
     record = select('product',fields,where)
@@ -92,12 +115,12 @@ def fetch_all():
     where = " "  
     record= select('product',fields,where,many=True)
     print(record)
-    return record
-    '''l1 = []
-    for i in data:
+    
+    l1 = []
+    for i in record:
         r1 = dict(i)
         l1.append(r1)
-    return l1'''
+    return l1
     
 #delete product
 def del_pro(id):
@@ -106,10 +129,8 @@ def del_pro(id):
     #conn.commit()
     #excution_query(sql%id)
     #print("data deleted")
-    fields = "*"
-    where = "where = %s"%id
-    record = delete('product',fields,where)
-    return record
+    where = "where user_id = %s"%id
+    delete('users',where)
 
 #update product
 def update_pro(name,image,price,desc,size,id):

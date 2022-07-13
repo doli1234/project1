@@ -63,7 +63,8 @@ def update(table,fields,data,where):
     return record
 
 def delete(table,where=""):
-    sql = "delete from" +table + where
+    sql = "DELETE from " +table +" "+ where
+    print(sql)
     excution_query(sql,())
 
 def select(table,fields,where="",many=False):

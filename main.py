@@ -2,7 +2,7 @@
 import email
 from email.mime import image
 import json
-from math import perm
+
 import os
 from tkinter import image_names
 from unicodedata import name
@@ -41,13 +41,13 @@ def user_alldata():
 #delete data
 @app.route("/user_deldata/<int:id>",methods=['POST'])
 def user_deldata(id):
-    data = user_del(id)
-    return jsonify(data)
+    user_del(id)
+    return jsonify("user delted")
 
 #update data
 @app.route("/user_updata/<int:id>",methods=['POST'])
 def user_updata(id):
-    name= request.json['name']
+    name= request.json['name']                  
     email=request.json['email']
     password=request.json['pass']
 
@@ -101,8 +101,8 @@ def product_all():
 #delete product
 @app.route("/product_del/<int:id>",methods=['POST'])
 def product_del(id):
-    data = del_pro(id)
-    return jsonify (data)
+    del_pro(id)
+    return jsonify ("data deleted")
 
 #update product
 @app.route("/product_update/<int:id>",methods=['POST'])
