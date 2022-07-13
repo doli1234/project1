@@ -102,7 +102,7 @@ def product_all():
 @app.route("/product_del/<int:id>",methods=['POST'])
 def product_del(id):
     del_pro(id)
-    return jsonify ("data deleted")
+    return jsonify ("data delete")
 
 #update product
 @app.route("/product_update/<int:id>",methods=['POST'])
